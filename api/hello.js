@@ -21,10 +21,12 @@ function _runWasm(reqBody) {
 }
 
 exports.handler = async function(event, context) {
-  var typedArray = new Uint8Array(event.body.match(/[\da-f]{2}/gi).map(function (h) {
-    return parseInt(h, 16);
-  }));
-  let buf = await _runWasm(typedArray);
+  let buf;
+  if (event.body !== null && event.body !== undefined) {
+    buf= await _runWasm(event.body);
+  }
+  
+ 
   return {
     statusCode: 200,
     headers: {
@@ -32,6 +34,6 @@ exports.handler = async function(event, context) {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT"
     },
-    body: buf.toString('hex')
+    body: buf.toString()
   };
 }
